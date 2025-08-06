@@ -56,7 +56,7 @@ public class AgentController : MonoBehaviour
 
     public void GrabBox(GameObject box)
     {
-        //set our held box, and set its position and rotation. Leave velocity alone mostly for humor reasons
+        //set our held box, and set its position and rotation. Leave velocity alone because its fun watching boxes fly around
         heldBox = box;
         box.transform.parent = boxAnchor.transform;
         box.transform.position = boxAnchor.transform.position;
