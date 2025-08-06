@@ -2,7 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-//This script does nothing on its own, only provides control functions for the state machine or player to use
+//This script does nothing on its own, only provides control functions for the state machine or a theoretical player input script to use
 [RequireComponent(typeof(Rigidbody2D))]
 public class AgentController : MonoBehaviour
 {
@@ -12,29 +12,19 @@ public class AgentController : MonoBehaviour
     private Rigidbody2D rigidbody;
     private bool grounded = false;
 
-
+    //These three properties are used as shared state across the state machine
     public Vector3 direction { get; set; }
     public GameObject target { get; set; }
-
     public GameObject touchingBox { get; private set; }
 
     private void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+
         if (playerData == null) 
         {
             Debug.LogError("Player has no data! Game will not function");
         }
-    }
-
-    private void Update()
-    {
-        //raycast for foolproof check to see if we can jump
-        var ray = Physics2D.Raycast(
-            transform.position - new Vector3(0, transform.localScale.y/2 + 0.01f), 
-            Vector2.down, 
-            0.05f);
-        grounded = ray.collider != null;
     }
 
     public void MoveLeft()
@@ -81,7 +71,7 @@ public class AgentController : MonoBehaviour
         }
     }
 
-    //we need to check both enter and stay so that we cant get stuck when there's a bunch of stacked up boxes
+    //we need to check both enter and stay so that we cant get stuck pressed up against boxes
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Box")
@@ -96,10 +86,5 @@ public class AgentController : MonoBehaviour
         {
             touchingBox = collision.gameObject.gameObject;
         }
-    }
-
-    public void OnTriggerStay(Collider other)
-    {
-        
     }
 }

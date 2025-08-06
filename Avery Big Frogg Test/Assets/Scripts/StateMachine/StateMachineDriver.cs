@@ -17,8 +17,6 @@ public class StateMachineDriver : MonoBehaviour
    acquire target <- it was target    it wasn't target -> move 
      */
 
-
-    //This was designed around scalability first
     private AgentController agentController;
     private State currentState;
 
@@ -35,25 +33,30 @@ public class StateMachineDriver : MonoBehaviour
         var movingState = new MoveToTargetState(agentController);
         var throwingState = new ThrowBoxState(agentController);
 
+        //transition between acquire and move
         var AcquireToMove = new Transition(acquireState, movingState, HasTarget);
         acquireState.AddTransition(AcquireToMove);
 
+        //transition between move and throw
         var MoveToThrow = new Transition(movingState, throwingState, TouchingBox);
         movingState.AddTransition(MoveToThrow);
 
+        //transition between throw and move
         var ThrowToMove = new Transition(throwingState, movingState, HasTarget);
-        var ThrowToAcquire = new Transition(throwingState, acquireState, NoTarget);
         throwingState.AddTransition(ThrowToMove);
+
+        //transition between throw and acquire
+        var ThrowToAcquire = new Transition(throwingState, acquireState, NoTarget);
         throwingState.AddTransition(ThrowToAcquire);
 
         currentState = acquireState;
 
-        StartCoroutine(UpdateProcess());
+        //kick off our state machine
+        StartCoroutine(RunStateLoop());
 
     }
 
-    //update drives 
-    private IEnumerator UpdateProcess()
+    private IEnumerator RunStateLoop()
     {
         //engine for the state machine
         //theoretically in a larger project this might have an exit contidion involving hitting a certain state before the agent is destroyed
@@ -63,14 +66,14 @@ public class StateMachineDriver : MonoBehaviour
             var activeTransition = currentState.EvaluateTransitions();
             if (activeTransition != null)
             {
-                //if we have a transition, call current states on exit, then new states on enter, then set our state to be the new state
+                //if we have a transition, call current state's OnExit, then new state's OnEnter, then set the new state as the current state
                 yield return currentState.OnExit();
                 yield return activeTransition.to.OnEnter();
                 currentState = activeTransition.to;
             }
             else
             {
-                //if we dont have a transition, run the maintian function for our current state
+                //if we dont have a transition, run the maintain function for our current state
                 yield return currentState.OnMaintain();
             }
 

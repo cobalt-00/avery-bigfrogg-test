@@ -25,7 +25,7 @@ public class MoveToTargetState : State
 
         if (direction.x < 0)
         {
-            //when we store the direction we want it to be exact and absolute 
+            //when we store the direction we want it to be exact and absolute to do math with
             controller.direction = Vector3.right;
             controller.MoveRight();
         } 

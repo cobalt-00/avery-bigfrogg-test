@@ -24,16 +24,20 @@ public class BoxSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //don't run update if we dont have data
         if (spawnData != null)
         {
+            //if we've hit the time to spawn a new cube
             if (currentSpawnTimer < 0)
             {
+                //spawn one and get a new time
                 SpawnCube();
                 currentSpawnTimer = RandomTimeInRange();
 
             }
             else
             {
+                //otherwise, just tick down our timer
                 currentSpawnTimer -= Time.deltaTime;
             }
         }
@@ -42,6 +46,7 @@ public class BoxSpawner : MonoBehaviour
 
     private float RandomTimeInRange()
     {
+        //generates a random time within the given intervals
         return Random.Range(spawnData.minSpawnInterval, spawnData.maxSpawnInterval);
     }
 

@@ -22,6 +22,7 @@ public abstract class State
 
     public Transition EvaluateTransitions()
     {
+        //iterate over transitions and invoke their evaluate delegate to find if any have their conditions met
         foreach (var transition in transitions) 
         {
             if (transition.evaluateConditions.Invoke())
